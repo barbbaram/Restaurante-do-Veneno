@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Restaurante do Veneno - Cadastrar produtos</title>
+  <style>
+.form-grupo{
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 20px;
+}
+.form-grupo input, .form-grupo textarea{
+    border: 1px solid #009;
+    border-radius: 10px;
+    padding: 10px;
+}
+html{
+    font-family: sans-serif;
+}
+.erro{
+    display: none;
+    color: #c00;
+    margin-top: 5px;
+}
+#mensagem{
+    display: none;
+    width: 400px;
+    height: 200px;
+    text-align: center;
+    border: 1px solid #000;
+    position: fixed;
+    top: calc(50% - 100px);
+    left: calc(50% - 200px);
+    background-color: #0c0;
+    align-items: center;
+    justify-content: center;
+}
+table{
+    width: 100%;
+}
+th{
+    background-color: #cccccc;
+}
+tbody tr:nth-child(odd){ 
+    background-color: #f2f2f2;
+}
+td, th{
+    padding: 5px;
+}
+  </style>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    let produtos = []
+    
+    function salvar() {
+        let nome = document.getElementById("nome").value.trim()
+        let preco = document.getElementById("preco").value.trim()
+        let descricao = document.getElementById("descricao").value.trim()
+
+        if (nome == "" || nome.length < 3) {
+          document.getElementById("erro-nome").style.display = "block"
+          return false
+        }
+        if (preco == "" || preco <= 0){
+          document.getElementById("erro-preco").style.display = "block"
+          return false
+        }
+
+        let novoProduto = {
+          "nome": nome,
+          "preco": preco,
+          "descricao": descricao
+        }
+
+        produtos.push(novoProduto)
+        console.log(produtos)
+
+        document.getElementById("mensagem").style.display = "flex"
+        setTimeout(function(){
+          document.getElementById("mensagem").style.display = "none"
+        }, 1000)
+        limparForm()
+
+        carregarProdutos()
+
+        return false;
+    }
+
+    function carregarProdutos(){
+      let tbody = document.getElementsByTagName("tbody")[0];
+      tbody.innerHTML = ""; // limpa a tabela antes de redesenhar
+      for(let contador = 0; contador <= produtos.length - 1; contador++){
+        let produto = produtos[contador]
+
+        let linha = document.createElement("tr")
+        linha.innerHTML = `<tr>
+          <td>${produto.nome}</td>
+          <td>R$ ${produto.preco}</td>
+          <td>${produto.descricao}</td>
+          <td>
+            <button class="btn btn-warning btn-sm">Alterar</button>
+            <button class="btn btn-danger btn-sm">Excluir</button>
+          </td>
+        </tr>`
+
+        tbody.appendChild(linha)
+      }
+    }
+
+    function limparForm(){
+      document.getElementById("nome").value = ""
+      document.getElementById("preco").value = ""
+      document.getElementById("descricao").value = ""
+      document.getElementById("nome").focus()
+    }
+
+    function limparErro(id){
+      document.getElementById(id).style.display = "none"
+    }
+  </script>
+</head>
+<body>
+  <div class="container mt-4">
+    <a href="index.html" class="btn btn-secondary mb-4">Voltar</a>
+    <h1>Cadastro de Produtos</h1>
+
+    <table class="table table-striped table-hover mt-4">
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>Preço</th>
+          <th>Descrição</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <form id="form-cadastro" method="post" onsubmit="return salvar()" style="margin:5px;">
+      <div class="mb-3">
+        <label for="nome">Nome do Produto</label>
+        <input type="text" name="nome" id="nome" maxlength="150" class="form-control" onkeydown="limparErro('erro-nome')" />
+        <div class="text-danger mt-1" id="erro-nome" style="display:none;">Preencha o nome do produto</div>
+      </div>
+      <div class="mb-3">
+        <label for="preco">Preço</label>
+        <input type="number" name="preco" id="preco" step="0.1" class="form-control" onkeydown="limparErro('erro-preco')" />
+        <div class="text-danger mt-1" id="erro-preco" style="display:none;">Preencha o preço</div>
+      </div>
+      <div class="mb-3">
+        <label for="descricao">Descrição (opcional)</label>
+        <textarea name="descricao" id="descricao" rows="5" cols="40" class="form-control"></textarea>
+      </div>
+      <div class="mb-3">
+        <input type="submit" value="Salvar" class="btn btn-success mt-3" />
+      </div>
+    </form>
+
+    <div id="mensagem" class="alert alert-success" style="display:none;position:fixed;top:30%;left:50%;transform:translate(-50%, -50%);padding:30px;text-align:center;">
+      <p>Produto cadastrado com sucesso.</p>
+    </div>
+  </div>
+</body>
+</html>
